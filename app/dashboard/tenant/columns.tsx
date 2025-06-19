@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import {
   IconDotsVertical,
 } from "@tabler/icons-react"
-import { formatDate } from "@/utils/formatDate"
+import { formatDate } from "@/utils/date"
 
 export const columns: ColumnDef<Tenant>[] = [
   {

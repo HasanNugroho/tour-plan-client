@@ -1,10 +1,10 @@
 "use client"
 
 import React from "react"
-import axios from "axios"
 import { columns } from "./columns"
 import { DataTable } from "@/components/data-table"
-import { TableFilters, TableFiltersDate } from "@/components/filter-table"
+import { TableFilters } from "@/components/filter-table"
+import { requestAPI } from "@/lib/apiHelper"
 
 export type Tenant = {
     id: string
@@ -31,35 +31,31 @@ export default function TenantsPage() {
 
     React.useEffect(() => {
         const fetchData = async () => {
-            const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNkMWIyMzRiLWMwYzUtNGU3ZC04ZGNiLWU0N2IwNjcxZmNjMCIsImlhdCI6MTc1MDMwNjcwNiwiZXhwIjoxNzUwMzEzOTA2fQ.aaLyrX1_BxNU3vy8NMTzXD-mSVhXtDGnjRoKdOeWamg'
             const isActiveFilter =
                 filters.category === "true"
                     ? true
                     : filters.category === "false"
                         ? false
                         : undefined;
-            console.log(isActiveFilter)
-            const res = await axios.get("http://localhost:3001/api/tenants", {
-                params: {
-                    page,
-                    limit,
-                    order,
-                    orderBy,
-                    keyword,
-                    isActive: isActiveFilter
 
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            const res = await requestAPI('get', '/tenants', {
+                page,
+                limit,
+                order,
+                orderBy,
+                keyword,
+                isActive: isActiveFilter
+            }, { isPublic: false }) as {
+                data: Tenant[],
+                meta: { itemCount: number }
+            }
 
-            setData(res.data.data)
-            setTotalItems(res.data.meta.itemCount)
+            setData(res.data)
+            setTotalItems(res.meta.itemCount)
         }
 
         fetchData()
-    }, [page, limit, keyword, orderBy, order, filters])
+    }, [page, limit, order, orderBy, keyword, filters])
 
     return (
         <div className="p-4">
@@ -82,11 +78,6 @@ export default function TenantsPage() {
                     setPage(1)
                     setKeyword(value)
                 }}
-                filters={filters}
-                onFilterChange={(newFilters: Record<string, string>) => {
-                    setFilters(newFilters)
-                    setPage(1)
-                }}
                 toolbar={
                     <>
                         <TableFilters
@@ -97,10 +88,10 @@ export default function TenantsPage() {
                                 { label: "InActive", value: "false" },
                             ]}
                         />
-                        <TableFiltersDate
+                        {/* <TableFiltersDate
                             filters={filters}
                             onFilterChange={setFilters}
-                        />
+                        /> */}
                     </>
                 }
 

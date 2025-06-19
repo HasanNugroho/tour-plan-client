@@ -15,6 +15,7 @@ import {
   PieChart,
   ReceiptText,
   Settings2,
+  Users2,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -23,175 +24,167 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { getUserFromLocalStorage } from "@/lib/storage/user"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/dashboard/avatars/shadcn.jpg",
+const navMain = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: LayoutDashboard,
+    isActive: true,
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-      isActive: true,
-    },
-    {
-      title: "Paket Tour",
-      url: "/dashboard/packages",
-      icon: Package,
-      isActive: true,
-      items: [
-        {
-          title: "Daftar Paket",
-          url: "/dashboard/packages",
-        },
-        {
-          title: "Buat Paket Baru",
-          url: "/dashboard/packages/create",
-        },
-      ],
-    },
-    {
-      title: "Tour Riil",
-      url: "/dashboard/tours",
-      icon: Map,
-      items: [
-        {
-          title: "Daftar Tour",
-          url: "/dashboard/tours",
-        },
-        {
-          title: "Buat Tour dari Template",
-          url: "/dashboard/tours/create",
-        },
-      ],
-    },
-    {
-      title: "Mitra / Vendor",
-      url: "/dashboard/partners",
-      icon: Building2,
-      items: [
-        {
-          title: "Daftar Mitra",
-          url: "/dashboard/partners",
-        },
-        {
-          title: "Tambah Mitra",
-          url: "/dashboard/partners/create",
-        },
-      ],
-    },
-    {
-      title: "Rundown",
-      url: "/dashboard/rundown",
-      icon: ClipboardList,
-      items: [
-        {
-          title: "Rundown Paket",
-          url: "/dashboard/packages/rundown",
-        },
-        {
-          title: "Rundown Tour",
-          url: "/dashboard/tours/rundown",
-        },
-      ],
-    },
-    {
-      title: "Estimasi & Pengeluaran",
-      url: "/dashboard/costs",
-      icon: ReceiptText,
-      items: [
-        {
-          title: "Estimasi Biaya",
-          url: "/dashboard/packages/costs",
-        },
-        {
-          title: "Pengeluaran Riil",
-          url: "/dashboard/tours/expenses",
-        },
-      ],
-    },
-    {
-      title: "Laporan",
-      url: "/dashboard/reports",
-      icon: FileText,
-      items: [
-        {
-          title: "Export PDF",
-          url: "/dashboard/reports/export",
-        },
-        {
-          title: "Perbandingan Biaya",
-          url: "/dashboard/reports/compare",
-        },
-      ],
-    },
-    {
-      title: "Pengaturan",
-      url: "/dashboard/settings",
-      icon: Settings2,
-      items: [
-        {
-          title: "Akun & Tim",
-          url: "/dashboard/settings/team",
-        },
-        {
-          title: "Billing",
-          url: "/dashboard/settings/billing",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+  {
+    title: "Paket Tour",
+    url: "/dashboard/packages",
+    icon: Package,
+    isActive: true,
+    items: [
+      {
+        title: "Tour",
+        url: "/dashboard/packages",
+      },
+      {
+        title: "Rundown",
+        url: "/dashboard/packages/rundown",
+      },
+      {
+        title: "Estimasi & Pengeluaran",
+        url: "/dashboard/packages/costs",
+      },
+    ],
+  },
+  {
+    title: "Tour Riil",
+    url: "/dashboard/tours",
+    icon: Map,
+    items: [
+      {
+        title: "Daftar Tour",
+        url: "/dashboard/tours",
+      },
+      {
+        title: "Buat Tour dari Template",
+        url: "/dashboard/tours/create",
+      },
+    ],
+  },
+  {
+    title: "Mitra / Vendor",
+    url: "/dashboard/partners",
+    icon: Building2,
+    items: [
+      {
+        title: "Daftar Mitra",
+        url: "/dashboard/partners",
+      },
+      {
+        title: "Tambah Mitra",
+        url: "/dashboard/partners/create",
+      },
+    ],
+  },
+  {
+    title: "Rundown",
+    url: "/dashboard/rundown",
+    icon: ClipboardList,
+    items: [
+      {
+        title: "Rundown Paket",
+        url: "/dashboard/packages/rundown",
+      },
+      {
+        title: "Rundown Tour",
+        url: "/dashboard/tours/rundown",
+      },
+    ],
+  },
+  {
+    title: "Estimasi & Pengeluaran",
+    url: "/dashboard/costs",
+    icon: ReceiptText,
+    items: [
+      {
+        title: "Estimasi Biaya",
+        url: "/dashboard/packages/costs",
+      },
+      {
+        title: "Pengeluaran Riil",
+        url: "/dashboard/tours/expenses",
+      },
+    ],
+  },
+  {
+    title: "Laporan",
+    url: "/dashboard/reports",
+    icon: FileText,
+    items: [
+      {
+        title: "Export PDF",
+        url: "/dashboard/reports/export",
+      },
+      {
+        title: "Perbandingan Biaya",
+        url: "/dashboard/reports/compare",
+      },
+    ],
+  },
+  {
+    title: "Tenant",
+    url: "/dashboard/tenant",
+    icon: Users2,
+    // isActive: true,
+  },
+  {
+    title: "Pengaturan",
+    url: "/dashboard/settings",
+    icon: Settings2,
+    items: [
+      {
+        title: "Akun & Tim",
+        url: "/dashboard/settings/team",
+      },
+      {
+        title: "Billing",
+        url: "/dashboard/settings/billing",
+      },
+    ],
+  },
+]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = React.useState<{
+    name: string
+    email: string
+    avatar: string
+  }>({
+    name: 'Guest',
+    email: '',
+    avatar: '/dashboard/avatars/shadcn.jpg',
+  })
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const stored = await getUserFromLocalStorage()
+      if (stored) {
+        setUser({
+          name: stored.fullName || stored.username,
+          email: stored.email ?? "",
+          avatar: stored.profilePhotoUrl,
+        })
+      }
+    }
+    fetchUser()
+  }, [])
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

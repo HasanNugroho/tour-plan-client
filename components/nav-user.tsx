@@ -1,12 +1,9 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
+  CircleUserRound,
   LogOut,
-  Sparkles,
 } from "lucide-react"
 
 import {
@@ -29,6 +26,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { clearUserFromLocalStorage } from "@/lib/storage/user"
+import { redirect } from "next/navigation"
 
 export function NavUser({
   user,
@@ -40,6 +39,15 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+
+  async function handleLogout() {
+    // Panggil API logout
+    await fetch('/api/auth/logout', { method: 'POST' })
+
+    clearUserFromLocalStorage()
+
+    redirect('/login')
+  }
 
   return (
     <SidebarMenu>
@@ -80,29 +88,11 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
             <DropdownMenuItem>
+              <CircleUserRound />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

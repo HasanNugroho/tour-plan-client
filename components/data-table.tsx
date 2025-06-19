@@ -48,9 +48,6 @@ type DataTableProps<TData, TValue> = {
     keyword: string
     onKeywordChange: (value: string) => void
 
-    filters?: Record<string, string>
-    onFilterChange?: (filters: Record<string, string>) => void
-
     filterPlaceholder?: string
     toolbar?: React.ReactNode
 }
@@ -68,8 +65,6 @@ export function DataTable<TData, TValue>({
     onSortChange,
     keyword,
     onKeywordChange,
-    filters,
-    onFilterChange,
     filterPlaceholder = "Search...",
     toolbar,
 }: DataTableProps<TData, TValue>) {
